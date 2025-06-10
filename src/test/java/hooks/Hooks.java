@@ -7,6 +7,10 @@ import java.util.Map;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
+import io.cucumber.java.*;
+
+import utilities.LoggerLoad;
+
 import utilities.ExcelReader;
 
 public class Hooks {
@@ -14,17 +18,19 @@ public class Hooks {
 	 protected static Map<String,List<List<String>>> excelData;
 	    private static ExcelReader excelReader;
 
-	    @BeforeClass
-	    public void setUp() {
+	    @BeforeAll
+	    public static void setUp() {
 	        // Load Excel data once before all tests in the class
-	        excelReader = new ExcelReader("Data.xlsx");
+	        excelReader = new ExcelReader("swagger-testData.xlsx");
 	        excelData = excelReader.getAllSheetsData();
+	        LoggerLoad.info(excelData.toString());
+	        
 	    }
 
 
 
-	    @AfterClass
-	    public void tearDown() {
+	    @AfterAll
+	    public static void tearDown() {
 	  
 	        try {
 	            if (excelReader != null) {
