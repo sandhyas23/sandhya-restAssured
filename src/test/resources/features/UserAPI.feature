@@ -34,11 +34,12 @@ Feature: User API
     Then The user receives status code and valid response
     Examples:
    |scenario|
+   |allUsers|
    |validUserId|
-|validUserFirstname|
-|invalidUserId|
-|invalidUserFirstname|
-|invalidEndpoint|
+   |validUserFirstname|
+   |invalidUserId|
+   |invalidUserFirstname|
+   |invalidEndpoint|
 
   #@updateuser
   #Scenario: edit a new user
@@ -46,15 +47,15 @@ Feature: User API
     #When the user send Put request with valid endpoint
     #Then The user receives success status code 200 and valid response
 
-  @deleteuser
-  Scenario Outline: delete a new user
-    Given the user has valid request header
-    When the user send Get request from "<scenario>"
-    Then The user receives status code and valid response
-        Examples:
-   |scenario|
-   |validUserId|
-|invalidUserId|
-|invalidEndpoint|
+  #@deleteuser
+  #Scenario Outline: delete a new user
+    #Given the user has valid request header
+    #When the user send Get request from "<scenario>"
+    #Then The user receives status code and valid response
+        #Examples:
+   #|scenario|
+   #|validUserId|
+   #|invalidUserId|
+   #|invalidEndpoint|
 
   

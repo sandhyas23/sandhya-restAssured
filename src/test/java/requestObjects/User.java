@@ -3,10 +3,10 @@ package requestObjects;
 public class User {
 
 	private String userFirstName, userLastName,userEmailId;
-    long userContactNumber;
+    String userContactNumber;
     Address userAddress;
 
-    public User(Address userAddress,String userFirstName,String userLastName,long userContactNumber,String userEmailId){
+    public User(String userFirstName,String userLastName,String userContactNumber,String userEmailId,Address userAddress){
         this.userAddress = userAddress;
         this.userFirstName = userFirstName;
         this.userLastName = userLastName;
@@ -38,11 +38,11 @@ public class User {
 		this.userEmailId = userEmailId;
 	}
 
-	public long getUserContactNumber() {
+	public String getUserContactNumber() {
 		return userContactNumber;
 	}
 
-	public void setUserContactNumber(long userContactNumber) {
+	public void setUserContactNumber(String userContactNumber) {
 		this.userContactNumber = userContactNumber;
 	}
 

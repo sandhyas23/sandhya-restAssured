@@ -1,7 +1,7 @@
 package requestObjects;
 
 public class Address {
-	 private String plotNumber,street, state,country;
+	  String plotNumber,street, state,country;
 	    int zipCode;
 
 	    public Address(String plotNumber, String street, String state, String country, int zipCode){
@@ -12,15 +12,15 @@ public class Address {
 	        this.zipCode = zipCode;
 	    }
 
-	    public String getPlotNumber() {
-	        return plotNumber;
-	    }
+	
 
-	    public void setPlotNumber(String plotNumber) {
-	        this.plotNumber = plotNumber;
-	    }
+	    public Address() {
+			// TODO Auto-generated constructor stub
+		}
 
-	    public String getStreet() {
+
+
+		public String getStreet() {
 	        return street;
 	    }
 
@@ -51,6 +51,18 @@ public class Address {
 	    public void setZipCode(int zipCode) {
 	        this.zipCode = zipCode;
 	    }
+
+
+
+		public String getPlotNumber() {
+			return plotNumber;
+		}
+
+
+
+		public void setPlotNumber(String plotNumber) {
+			this.plotNumber = plotNumber;
+		}
 	
 
 }

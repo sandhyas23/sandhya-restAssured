@@ -15,7 +15,7 @@ import utilities.ExcelReader;
 
 public class Hooks {
 	
-	 protected static Map<String,List<List<String>>> excelData;
+	    public static Map<String,List<List<String>>> excelData;
 	    private static ExcelReader excelReader;
 
 	    @BeforeAll
@@ -23,7 +23,7 @@ public class Hooks {
 	        // Load Excel data once before all tests in the class
 	        excelReader = new ExcelReader("swagger-testData.xlsx");
 	        excelData = excelReader.getAllSheetsData();
-	        LoggerLoad.info(excelData.toString());
+	        //LoggerLoad.info(excelData.toString());
 	        
 	    }
 
