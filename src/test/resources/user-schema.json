@@ -1,0 +1,27 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	        "title": "Generated schema for Root",
+	        "type": "array",
+	        "properties": {
+	            "userAddress": {
+	                "type": "object",
+	                "properties": {
+	                    "addressId": { "type": "number" },
+	                    "plotNumber": { "type": "string" },
+	                    "street": { "type": "string" },
+	                    "state": { "type": "string" },
+	                    "country": { "type": "string" },
+	                    "zipCode": { "type": "number" }
+	                },
+	                "required": ["addressId", "plotNumber", "street", "state", "country", "zipCode"]
+	            },
+	            "userId": { "type": "number" },
+	            "userFirstName": { "type": "string" },
+	            "userLastName": { "type": "string" },
+	            "userContactNumber": { "type": "number" },
+	            "userEmailId": { "type": "string" },
+	            "creationTime": { "type": "string" },
+	            "lastModTime": { "type": "string" }
+	        },
+	        "required": ["userAddress", "userId", "userFirstName", "userLastName", "userContactNumber", "userEmailId", "creationTime", "lastModTime"]
+}
