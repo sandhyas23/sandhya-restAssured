@@ -21,12 +21,6 @@ Feature: User API
    |invalidEmailId|
    
 
-  #@getallusers 
-  #Scenario: Get all users
-    #Given the user has valid request header
-    #When user sends Get Request with valid endpoint
-    #Then The user receives success status code 200 and valid response
-
   @getuserbyid 
   Scenario Outline: Get new user by user id
     Given the user has valid request header
@@ -39,13 +33,25 @@ Feature: User API
    |validUserFirstname|
    |invalidUserId|
    |invalidUserFirstname|
-   |invalidEndpoint|
+   |wrongEndpoint|
 
-  #@updateuser
-  #Scenario: edit a new user
-    #Given the user has valid request header
-    #When the user send Put request with valid endpoint
-    #Then The user receives success status code 200 and valid response
+    
+    
+  @updateuser
+  Scenario Outline: update a new user
+    Given the user has valid request header
+    When the user send Put request from "<scenario>"
+    Then The user receives status code and valid response
+        Examples:
+   |scenario|
+   |validDataAll|
+   |existingContactNo|
+   |existingEmailId|
+   |invalidContactNo|
+   |invalidEmailId|
+   |invalidUserId|
+   |wrongEndpoint|
+
 
   @deleteuser
   Scenario Outline: delete a new user
@@ -56,6 +62,6 @@ Feature: User API
    |scenario|
    |validUserId|
    |invalidUserId|
-   |invalidEndpoint|
+   |wrongEndpoint|
 
   

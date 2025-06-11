@@ -25,9 +25,9 @@ public class UserApiStepDef extends Utils {
 	int newUserId;
 	String newUserFirstName;
 	String currentScenario;
-	private Map<String,List<List<String>>> excel = Hooks.excelData;
-	List<List<String>> requestData;
-	List<String> eachRowData;
+	private Map<String,List<Map<String,String>>> excel = Hooks.excelData;
+	List<Map<String,String>> requestData;
+	Map<String,String> scenarioRow;
 	//         Get,[ [scenario, statusCode, statusMsg, endPoint],[allUsers,200,Found,/users],
 	//                [validUserId,200,Found,/user{userId}] ]
 	
@@ -50,13 +50,14 @@ public class UserApiStepDef extends Utils {
 	public void the_user_send_post_request_from(String scenario) {
 		    currentScenario = scenario;
 		    requestData = excel.get("Post");
-		    eachRowData = getScenarioRow(requestData, scenario);
-		    String endPoint = eachRowData.get(3);
+		    //LoggerLoad.info("requestData: " + requestData);
+		    scenarioRow = getScenarioRow(requestData, scenario);
+		    String endPoint = scenarioRow.get("endPoint");
 
-		    Address addressObject = buildAddress(eachRowData, scenario.equals("validMandatory"));
-		    User userObject = buildUser(eachRowData, addressObject);
+		    Address addressObject = buildAddress(scenarioRow, scenario.equals("validMandatory"));
+		    User userObject = buildUser(scenarioRow, addressObject);
 
-		    LoggerLoad.info("address and user obej" + userObject);
+		   System.out.println(userObject);
 
 		    response = request.body(userObject).post(endPoint);
 
@@ -73,8 +74,8 @@ public class UserApiStepDef extends Utils {
 	public void the_user_send_get_request_from(String scenario) {
 		   currentScenario = scenario;
 		   requestData = excel.get("Get");
-		   eachRowData = getScenarioRow(requestData, scenario);
-		   String endPoint = eachRowData.get(3);
+		   scenarioRow = getScenarioRow(requestData, scenario);
+		   String endPoint = scenarioRow.get("endPoint");
 		   
 		   if (scenario.equals("allUsers") || scenario.equals("wrongEndpoint") ||
 			        scenario.equals("invalidUserId") || scenario.equals("invalidUserFirstname")) {
@@ -86,19 +87,42 @@ public class UserApiStepDef extends Utils {
 			    }
 			}
 	
+	
+	@When("the user send Put request from {string}")
+	public void the_user_send_put_request_from(String scenario) {
+		   currentScenario = scenario;
+		   requestData = excel.get("Put");
+		   scenarioRow = getScenarioRow(requestData, scenario);
+		   String endPoint = scenarioRow.get("endPoint");
+		   
+		    Address addressObject = buildAddress(scenarioRow, scenario.equals("validMandatory"));
+		    User userObject = buildUser(scenarioRow, addressObject);
+
+		   System.out.println(userObject);
+		   
+		   if (scenario.equals("wrongEndpoint") || scenario.equals("invalidUserId")) {
+			        response = request.body(userObject).put(endPoint);
+			    } 
+			 else {
+			        response = request.body(userObject).put(endPoint, newUserId);
+			    }
+			}
+	
+	
+	
 	@When("the user send Delete request from {string}")
 	public void the_user_send_delete_request_from(String scenario) {
 		   currentScenario = scenario;
 		   requestData = excel.get("Delete");
-		   eachRowData = getScenarioRow(requestData, scenario);
-		   String endPoint = eachRowData.get(3);
+		   scenarioRow = getScenarioRow(requestData, scenario);
+		   String endPoint = scenarioRow.get("endPoint");
 		   
 		   if (scenario.equals("wrongEndpoint") || scenario.equals("invalidUserId")) {
 			        response = request.delete(endPoint);
 			    } else if (scenario.equals("validUserFirstname")) {
-			        response = request.get(endPoint, newUserFirstName);
+			        response = request.delete(endPoint, newUserFirstName);
 			    } else {
-			        response = request.get(endPoint, newUserId);
+			        response = request.delete(endPoint, newUserId);
 			    }
 			}
 
@@ -108,7 +132,7 @@ public class UserApiStepDef extends Utils {
 	@Then("The user receives status code and valid response")
 	public void the_user_receives_status_code_and_valid_response() {
 		
-		validateResponse(response, eachRowData);
+		validateResponse(response, scenarioRow);
 		
 	}
 

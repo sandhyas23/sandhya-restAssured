@@ -17,6 +17,18 @@ public class Address {
 	    public Address() {
 			// TODO Auto-generated constructor stub
 		}
+	    
+	    @Override
+	    public String toString() {
+	        return "Address{" +
+	                "plotNumber='" + plotNumber + '\'' +
+	                ", street='" + street + '\'' +
+	                ", state='" + state + '\'' +
+	                ", country='" + country + '\'' +
+	                ", zipCode='" + zipCode + '\'' +
+	                '}';
+	    }
+
 
 
 

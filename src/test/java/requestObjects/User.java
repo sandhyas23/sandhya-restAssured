@@ -3,10 +3,10 @@ package requestObjects;
 public class User {
 
 	private String userFirstName, userLastName,userEmailId;
-    String userContactNumber;
+    long userContactNumber;
     Address userAddress;
 
-    public User(String userFirstName,String userLastName,String userContactNumber,String userEmailId,Address userAddress){
+    public User(String userFirstName,String userLastName,long userContactNumber,String userEmailId,Address userAddress){
         this.userAddress = userAddress;
         this.userFirstName = userFirstName;
         this.userLastName = userLastName;
@@ -14,6 +14,18 @@ public class User {
         this.userEmailId = userEmailId;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "userFirstName='" + userFirstName + '\'' +
+                ", userLastName='" + userLastName + '\'' +
+                ", userContactNumber='" + userContactNumber + '\'' +
+                ", userEmailId='" + userEmailId + '\'' +
+                ", address=" + userAddress +
+                '}';
+    }
+
+    
     public Address getUserAddress() {
         return userAddress;
     }
@@ -38,11 +50,11 @@ public class User {
 		this.userEmailId = userEmailId;
 	}
 
-	public String getUserContactNumber() {
+	public long getUserContactNumber() {
 		return userContactNumber;
 	}
 
-	public void setUserContactNumber(String userContactNumber) {
+	public void setUserContactNumber(long userContactNumber) {
 		this.userContactNumber = userContactNumber;
 	}
 

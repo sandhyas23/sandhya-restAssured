@@ -15,7 +15,7 @@ import utilities.ExcelReader;
 
 public class Hooks {
 	
-	    public static Map<String,List<List<String>>> excelData;
+	    public static Map<String,List<Map<String,String>>> excelData;
 	    private static ExcelReader excelReader;
 
 	    @BeforeAll
