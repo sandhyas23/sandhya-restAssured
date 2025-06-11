@@ -36,8 +36,7 @@ public class UserApiStepDef extends Utils {
 	@Given("The User is authorized")
     public void the_user_is_authorized() {
         RestAssured.baseURI = ConfigReader.getProperty("baseUrl");
-        request = RestAssured.given().auth().basic(
-        		ConfigReader.getProperty("username"),ConfigReader.getProperty("password"));
+        request = createAuthorizedRequest();
     }
 
     @Given("the user has valid request header")
@@ -45,44 +44,25 @@ public class UserApiStepDef extends Utils {
         request.header("Content-Type", "application/json");
 
     }
-
+    
 
 	@When("the user send Post request from {string}")
 	public void the_user_send_post_request_from(String scenario) {
-		currentScenario = scenario;
-		requestData = excel.get("Post");
-		Address addressObject;
-		
-		for(int i = 1; i < requestData.size(); i++) {
-			if(requestData.get(i).get(0).equals(scenario)) {
-				eachRowData = requestData.get(i);
-			   
-				if(scenario.equals("validMandatory")) {
-					 addressObject = new Address();
-				}
-				else {
-					 addressObject = new Address(eachRowData.get(6),
-							eachRowData.get(7), eachRowData.get(8), eachRowData.get(9),
-							(int) Double.parseDouble(eachRowData.get(10)));
-				}
-				String endPoint = requestData.get(i).get(11);
-				
-				User userObject = new User(eachRowData.get(2), eachRowData.get(3),
-						eachRowData.get(4), eachRowData.get(5), addressObject);		
-				
-			    LoggerLoad.info("address and user obej"+userObject);	
-			
-				response = request.body(userObject).post(endPoint);
-				
-				if(response.statusCode() == 201 && scenario.equals("validDataAll")) {
-					newUserId = response.then().extract().path("userId");
-					newUserFirstName = response.then().extract().path("userFirstName");
-				}
-//				else if(response.statusCode() == 201 && scenario.equals("validMandatory")) {
-//					request.delete("/deleteuser/{userId}",response.then().extract().path("userId"));
-//				}
-				break;
-				}
+		    currentScenario = scenario;
+		    requestData = excel.get("Post");
+		    eachRowData = getScenarioRow(requestData, scenario);
+		    String endPoint = eachRowData.get(3);
+
+		    Address addressObject = buildAddress(eachRowData, scenario.equals("validMandatory"));
+		    User userObject = buildUser(eachRowData, addressObject);
+
+		    LoggerLoad.info("address and user obej" + userObject);
+
+		    response = request.body(userObject).post(endPoint);
+
+		    if (response.statusCode() == 201 && scenario.equals("validDataAll")) {
+		        newUserId = response.then().extract().path("userId");
+		        newUserFirstName = response.then().extract().path("userFirstName");
 			}
 	    
 	}
@@ -91,36 +71,44 @@ public class UserApiStepDef extends Utils {
 
 	@When("the user send Get request from {string}")
 	public void the_user_send_get_request_from(String scenario) {
-		currentScenario = scenario;
-		requestData = excel.get("Get");
-		for(int i = 1; i < requestData.size(); i++) {
-			if(requestData.get(i).get(0).equals(scenario)) {
-				eachRowData = requestData.get(i);
-				String endPoint = requestData.get(i).get(3);
-				if(scenario.equals("allUsers") || scenario.equals("invalidEndpoint") || 
-						scenario.equals("invalidUserId") || scenario.equals("invalidUserFirstname")) {
-					response = request.get(endPoint);
-				}
-				else if(scenario.equals("validUserFirstname")) {
-					response = request.get(endPoint,newUserFirstName);
-				}
-				else {
-					response = request.get(endPoint,newUserId);
-				}
-				
-				break;
-				}
+		   currentScenario = scenario;
+		   requestData = excel.get("Get");
+		   eachRowData = getScenarioRow(requestData, scenario);
+		   String endPoint = eachRowData.get(3);
+		   
+		   if (scenario.equals("allUsers") || scenario.equals("wrongEndpoint") ||
+			        scenario.equals("invalidUserId") || scenario.equals("invalidUserFirstname")) {
+			        response = request.get(endPoint);
+			    } else if (scenario.equals("validUserFirstname")) {
+			        response = request.get(endPoint, newUserFirstName);
+			    } else {
+			        response = request.get(endPoint, newUserId);
+			    }
 			}
-		}
 	
+	@When("the user send Delete request from {string}")
+	public void the_user_send_delete_request_from(String scenario) {
+		   currentScenario = scenario;
+		   requestData = excel.get("Delete");
+		   eachRowData = getScenarioRow(requestData, scenario);
+		   String endPoint = eachRowData.get(3);
+		   
+		   if (scenario.equals("wrongEndpoint") || scenario.equals("invalidUserId")) {
+			        response = request.delete(endPoint);
+			    } else if (scenario.equals("validUserFirstname")) {
+			        response = request.get(endPoint, newUserFirstName);
+			    } else {
+			        response = request.get(endPoint, newUserId);
+			    }
+			}
+
+		
 	
 	// Then check for all requests.
 	@Then("The user receives status code and valid response")
 	public void the_user_receives_status_code_and_valid_response() {
 		
-		
-		int statusCode = (int) Double.parseDouble(eachRowData.get(1));
-		validateResponse(response, statusCode);
+		validateResponse(response, eachRowData);
 		
 	}
 
