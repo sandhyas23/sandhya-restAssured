@@ -74,7 +74,7 @@ public class UserApiStepDef extends Utils {
 		        newUserFirstName = response.then().extract().path("userFirstName");
 			}
 		    else if (response.statusCode()== 201 && currentScenario.equals("validMandatory")) {
-		    	LoggerLoad.info("User created successfully with mandatory fields only with ID: " + response.then().extract().path("userId"));
+		    	LoggerLoad.info("User created successfully with mandatory fields only with ID: " + response.then().extract().path("userId")+" -- "+response.then().extract().path("userAddress.zipCode"));
 		        mandatoryUserId = response.then().extract().path("userId");
 		        mandatoryUserFirstName = response.then().extract().path("userFirstName");
 		    }
