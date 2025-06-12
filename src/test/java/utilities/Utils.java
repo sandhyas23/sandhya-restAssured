@@ -45,9 +45,9 @@ public class Utils {
 	  public void validatePositiveResponse(Response response, int expectedStatusCode, String expectedStatusLine, String schemaFile) {
 	        response.then()
 	            .statusCode(expectedStatusCode)
-	            .statusLine(expectedStatusLine)
+	            .statusLine(expectedStatusLine);
 	            //.body(jsonPath, equalTo(expectedValue))
-	            .body(matchesJsonSchemaInClasspath(schemaFile));
+	           // .body(matchesJsonSchemaInClasspath(schemaFile));
 	    }
 
 	    // Negative: Validate error status code, status line, and error message

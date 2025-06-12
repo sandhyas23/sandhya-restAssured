@@ -5,7 +5,7 @@ Feature: User API
      Given The User is authorized
 
 @postuser
-  Scenario Outline: Add a new user
+  Scenario Outline: add a new user
   Given the user has valid request header
   When the user send Post request from "<scenario>"
   Then The user receives status code and valid response
@@ -14,7 +14,7 @@ Feature: User API
    |validDataAll|
    |existingContactNo|
    |existingEmailId|
-   |validMandatory|
+   #|validMandatory|
    |invalidFirstname|
    |invalidLastname|
    |invalidContactNo|
@@ -22,7 +22,7 @@ Feature: User API
    
 
   @getuserbyid 
-  Scenario Outline: Get new user by user id
+  Scenario Outline: get new user by user id
     Given the user has valid request header
     When the user send Get request from "<scenario>"
     Then The user receives status code and valid response

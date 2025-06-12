@@ -22,8 +22,8 @@ public class UserApiStepDef extends Utils {
 	
 	private RequestSpecification request;	
 	private Response response;
-	int newUserId;
-	String newUserFirstName;
+	private static int newUserId;
+	private static String newUserFirstName;
 	String currentScenario;
 	private Map<String,List<Map<String,String>>> excel = Hooks.excelData;
 	List<Map<String,String>> requestData;
@@ -61,7 +61,8 @@ public class UserApiStepDef extends Utils {
 
 		    response = request.body(userObject).post(endPoint);
 
-		    if (response.statusCode() == 201 && scenario.equals("validDataAll")) {
+		    if (response.statusCode()== 201 && scenario.equals("validDataAll")) {
+		    	LoggerLoad.info("User created successfully with ID: " + response.then().extract().path("userId"));
 		        newUserId = response.then().extract().path("userId");
 		        newUserFirstName = response.then().extract().path("userFirstName");
 			}
@@ -104,6 +105,7 @@ public class UserApiStepDef extends Utils {
 			        response = request.body(userObject).put(endPoint);
 			    } 
 			 else {
+				 LoggerLoad.info("UserID in put: " + newUserId+" ,  "+newUserFirstName);
 			        response = request.body(userObject).put(endPoint, newUserId);
 			    }
 			}
@@ -122,6 +124,7 @@ public class UserApiStepDef extends Utils {
 			    } else if (scenario.equals("validUserFirstname")) {
 			        response = request.delete(endPoint, newUserFirstName);
 			    } else {
+			    	LoggerLoad.info("UserID in delete: " + newUserId+" ,  "+newUserFirstName);
 			        response = request.delete(endPoint, newUserId);
 			    }
 			}

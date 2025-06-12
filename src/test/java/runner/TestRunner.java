@@ -6,7 +6,9 @@ import io.cucumber.testng.AbstractTestNGCucumberTests;
 import io.cucumber.testng.CucumberOptions;
 
 	@CucumberOptions(plugin = { "pretty",
-			"html:target/Report.html" }, monochrome = false, features = {
+			"html:target/Report.html","html:target/cucumber-reports/cucumber.html",
+    		"io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm" }, 
+			monochrome = false, features = {
 					"src/test/resources/features" }, glue = { "stepDefinitions", "hooks" })
 
 	public class TestRunner extends AbstractTestNGCucumberTests {
