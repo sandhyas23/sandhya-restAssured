@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static org.hamcrest.Matchers.equalTo;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,24 +20,41 @@ public class Utils {
 	  public void validateResponse(Response response, Map<String,String> row, String sheetName) {
 		    int expectedStatusCode = (int)Double.parseDouble(row.get("statusCode"));
 		    String expectedStatusLine = row.get("statusLine");
-		    //System.out.println(row);
 		    String schemaFileForObject = "user-schema.json";
 		    String schemaFileForArray = "user-array-schema.json";
-		   // String userFirstName =
-//		    String expectedValue = row.size() > 6 ? row.get(6) : null;
-//		    String errorJsonPath = row.size() > 7 ? row.get(7) : null;
-//		    String expectedErrorMessage = row.size() > 8 ? row.get(8) : null;
 		    String scenario = row.get("scenario");
+		    String expectedMessage = row.get("message");
+		    Map<String,Object> userDetails = new HashMap<>();
+		    
+		    if((!sheetName.equals("Delete") && !sheetName.equals("Get") )) {
+		    	userDetails.put("userFirstName", row.get("userFirstName"));
+		    	userDetails.put("userLastName", row.get("userLastName"));
+		    	userDetails.put("userContactNumber", (long)Double.parseDouble(row.get("userContactNumber")));
+		    	userDetails.put("userEmailId", row.get("userEmailId"));
+		    	
+		    	 String[] addressFields = {"plotNumber", "street", "state", "country", "zipCode"};
+		    	    for (String field : addressFields) {
+		    	        String key = "userAddress." + field;
+		    	        Object value = scenario.equals("validMandatory") ? null :
+		    	            ("zipCode".equals(field) ? (int) Double.parseDouble(row.get(field)) : row.get(field));
+		    	        userDetails.put(key, value);
+		    	    }
+		    	 	
+//		    	String userFirstName= row.get("userFirstName");
+		    }
+		    
+		    
+		    validateResponseHeader(response);
 
-		    if (scenario.toLowerCase().contains("invalid") || scenario.toLowerCase().contains("existing") ||
-		    		scenario.toLowerCase().contains("delete")) {
-		            validateNegativeAndDeleteResponse(response, expectedStatusCode, expectedStatusLine);
+		    if (scenario.toLowerCase().contains("invalid") || scenario.toLowerCase().contains("existing") ||scenario.toLowerCase().contains("delete"))
+		    {
+		      validateNegativeAndDeleteResponse(response, expectedStatusCode, expectedStatusLine,expectedMessage);
 		    } else if (scenario.equalsIgnoreCase("allUsers") || scenario.equalsIgnoreCase("validUserFirstname")) {
 		        validateGetAllOrManyResponse(response, expectedStatusCode, expectedStatusLine, schemaFileForArray);
 		    } else if (scenario.toLowerCase().startsWith("valid") && schemaFileForObject != null) {
-		        validatePositiveResponse(response, expectedStatusCode, expectedStatusLine, schemaFileForObject);
+		        validatePositiveResponse(response, expectedStatusCode, expectedStatusLine, schemaFileForObject, userDetails);
 		    } else if(scenario.toLowerCase().contains("wrong")) {
-		    	validateErrorResponse(response,expectedStatusCode, expectedStatusLine);
+		    	validateErrorResponse(response,expectedStatusCode, expectedStatusLine,expectedMessage);
 		    }
 		    else {
 		        response.then().statusCode(expectedStatusCode).statusLine(expectedStatusLine);
@@ -44,21 +62,27 @@ public class Utils {
 		}
 	  
 	  
+	  public void validateResponseHeader(Response response) {
+		  response.then().header("Content-Type", "application/json");
+	  }
 	  
-	  public void validatePositiveResponse(Response response, int expectedStatusCode, String expectedStatusLine, String schemaFile) {
+	  public void validatePositiveResponse(Response response, int expectedStatusCode, String expectedStatusLine, String schemaFile, Map<String,Object> userDetails) {
 	        response.then()
 	            .statusCode(expectedStatusCode)
 	            .statusLine(expectedStatusLine)
-	            //.body(jsonPath, equalTo(expectedValue))
 	            .body(matchesJsonSchemaInClasspath(schemaFile));
+	        for (Map.Entry<String, Object> entry : userDetails.entrySet()) {
+	            response.then().body(entry.getKey(), equalTo(entry.getValue()));
+	        }
+	        
 	    }
 
 	    // Negative: Validate error status code, status line, and error message
-	    public void validateNegativeAndDeleteResponse(Response response, int expectedStatusCode, String expectedStatusLine) {
+	    public void validateNegativeAndDeleteResponse(Response response, int expectedStatusCode, String expectedStatusLine, String expectedMessage) {
 	        response.then()
 	            .statusCode(expectedStatusCode)
-	            .statusLine(expectedStatusLine);
-	           // .body(jsonPath, equalTo(expectedErrorMessage));
+	            .statusLine(expectedStatusLine)
+	            .body("message", equalTo(expectedMessage));
 	    }
 
 	    // GET all: Validate status code, status line, and schema for list response
@@ -69,22 +93,20 @@ public class Utils {
 	            .body(matchesJsonSchemaInClasspath(schemaFile));
 	    }
 	    
-	    public void validateErrorResponse(Response response, int expectedStatusCode, String expectedStatusLine) {
+	    public void validateErrorResponse(Response response, int expectedStatusCode, String expectedStatusLine, String expectedMessage) {
 	    	response.then()
 	    		.statusCode(expectedStatusCode)
 	    		.statusLine(expectedStatusLine)
-	    		.body("status",equalTo(404))
-	    		.body("error",equalTo("Not Found"));
+	    		//.body("status",equalTo(404))
+	    		.body("error",equalTo(expectedMessage));
 	    }
-	  
-	  
 	  
 	  
 	  public RequestSpecification createAuthorizedRequest() {
 		    return RestAssured.given().auth().basic(
 		        ConfigReader.getProperty("username"),
 		        ConfigReader.getProperty("password")
-		    );
+		    ).log().all();
 		}
 
 		public void addJsonHeader(RequestSpecification request) {
@@ -100,13 +122,6 @@ public class Utils {
 			        }
 			    }
 			    return null;
-			
-//		    for (int i = 1; i < data.size(); i++) {
-//		        if (data.get(i).get(0).equals(scenario)) {
-//		            return data.get(i);
-//		        }
-//		    }
-//		    return null;
 		}
 		
 		
