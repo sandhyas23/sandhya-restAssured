@@ -39,8 +39,6 @@ public class Utils {
 		    	            ("zipCode".equals(field) ? (int) Double.parseDouble(row.get(field)) : row.get(field));
 		    	        userDetails.put(key, value);
 		    	    }
-		    	 	
-//		    	String userFirstName= row.get("userFirstName");
 		    }
 		    
 		    
@@ -49,11 +47,14 @@ public class Utils {
 		    if (scenario.toLowerCase().contains("invalid") || scenario.toLowerCase().contains("existing") ||scenario.toLowerCase().contains("delete"))
 		    {
 		      validateNegativeAndDeleteResponse(response, expectedStatusCode, expectedStatusLine,expectedMessage);
-		    } else if (scenario.equalsIgnoreCase("allUsers") || scenario.equalsIgnoreCase("validUserFirstname")) {
+		    } 
+		    else if (scenario.equalsIgnoreCase("allUsers") || scenario.equalsIgnoreCase("validUserFirstname")) {
 		        validateGetAllOrManyResponse(response, expectedStatusCode, expectedStatusLine, schemaFileForArray);
-		    } else if (scenario.toLowerCase().startsWith("valid") && schemaFileForObject != null) {
+		    } 
+		    else if (scenario.toLowerCase().startsWith("valid") && schemaFileForObject != null) {
 		        validatePositiveResponse(response, expectedStatusCode, expectedStatusLine, schemaFileForObject, userDetails);
-		    } else if(scenario.toLowerCase().contains("wrong")) {
+		    } 
+		    else if(scenario.toLowerCase().contains("wrong") || scenario.equals("noAuth")) {
 		    	validateErrorResponse(response,expectedStatusCode, expectedStatusLine,expectedMessage);
 		    }
 		    else {
@@ -77,7 +78,7 @@ public class Utils {
 	        
 	    }
 
-	    // Negative: Validate error status code, status line, and error message
+	 
 	    public void validateNegativeAndDeleteResponse(Response response, int expectedStatusCode, String expectedStatusLine, String expectedMessage) {
 	        response.then()
 	            .statusCode(expectedStatusCode)
@@ -85,7 +86,6 @@ public class Utils {
 	            .body("message", equalTo(expectedMessage));
 	    }
 
-	    // GET all: Validate status code, status line, and schema for list response
 	    public void validateGetAllOrManyResponse(Response response, int expectedStatusCode, String expectedStatusLine, String schemaFile) {
 	        response.then()
 	            .statusCode(expectedStatusCode)
@@ -107,6 +107,12 @@ public class Utils {
 		        ConfigReader.getProperty("username"),
 		        ConfigReader.getProperty("password")
 		    ).log().all();
+		}
+	  
+	  public RequestSpecification createUnauthorizedRequest() {
+		  return RestAssured.given().auth().basic(
+				  ConfigReader.getProperty("invalidUsername"),
+			        ConfigReader.getProperty("invalidPassword")).log().all();	  
 		}
 
 		public void addJsonHeader(RequestSpecification request) {
@@ -183,7 +189,7 @@ public class Utils {
 			            
 			            break;
 			        default:
-			            // Return empty object for unknown scenarios
+			           
 			            break;
 			    }
 			    return userPatch;

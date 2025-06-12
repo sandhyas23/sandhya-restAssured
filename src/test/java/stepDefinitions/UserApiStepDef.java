@@ -45,6 +45,12 @@ public class UserApiStepDef extends Utils {
         request = createAuthorizedRequest();
     }
 	
+	@Given("the User is not authorized")
+	public void the_user_is_not_authorized() {
+		RestAssured.baseURI = ConfigReader.getProperty("baseUrl");
+        request = createUnauthorizedRequest();
+	}
+	
 	
 	@Given("{string} request with BaseURL and valid EndPoint from {string}")
 	public void request_with_base_url_and_valid_end_point_from(String requestName, String scenario) {
@@ -87,7 +93,8 @@ public class UserApiStepDef extends Utils {
 	public void the_user_send_get_request() {
 		   
 		   if (currentScenario.equals("allUsers") || currentScenario.equals("wrongEndpoint") ||
-				   currentScenario.equals("invalidUserId") || currentScenario.equals("invalidUserFirstname")) {
+				   currentScenario.equals("invalidUserId") || currentScenario.equals("invalidUserFirstname")
+				   || currentScenario.equals("noAuth")) {
 			        response = request.get(endPoint);
 			    } else if (currentScenario.equals("validUserFirstname")) {
 			        response = request.get(endPoint, newUserFirstName);
