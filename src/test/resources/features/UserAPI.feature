@@ -2,29 +2,31 @@
 Feature: User API
   
     Background: Admin login with Basic Auth
-     Given The User is authorized
+     Given the User is authorized
 
-@postuser
-  Scenario Outline: add a new user
-  Given the user has valid request header
-  When the user send Post request from "<scenario>"
+@createuser
+  Scenario Outline: create a new user
+  Given "Post" request with BaseURL and valid EndPoint from "<scenario>"
+  When the user sends Post request
   Then The user receives status code and valid response
   Examples:
    |scenario|
    |validDataAll|
    |existingContactNo|
    |existingEmailId|
-   #|validMandatory|
+   |validMandatory|
    |invalidFirstname|
    |invalidLastname|
    |invalidContactNo|
    |invalidEmailId|
+   |invalidPlotNumber|
+   
    
 
-  @getuserbyid 
-  Scenario Outline: get new user by user id
-    Given the user has valid request header
-    When the user send Get request from "<scenario>"
+  @getuser
+  Scenario Outline: get all users and by user id or firstname
+    Given "Get" request with BaseURL and valid EndPoint from "<scenario>"
+    When the user sends Get request
     Then The user receives status code and valid response
     Examples:
    |scenario|
@@ -38,9 +40,9 @@ Feature: User API
     
     
   @updateuser
-  Scenario Outline: update a new user
-    Given the user has valid request header
-    When the user send Put request from "<scenario>"
+  Scenario Outline: update a user
+    Given "Put" request with BaseURL and valid EndPoint from "<scenario>"
+    When the user sends Put request
     Then The user receives status code and valid response
         Examples:
    |scenario|
@@ -51,16 +53,36 @@ Feature: User API
    |invalidEmailId|
    |invalidUserId|
    |wrongEndpoint|
+   
+   
+   @patchuser
+  Scenario Outline: patch update a user
+    Given "Patch" request with BaseURL and valid EndPoint from "<scenario>"
+    When the user sends Patch request
+    Then The user receives status code and valid response
+    Examples:
+   |scenario|
+   |validFirstNamePatch|
+	 |validEmailIdPatch|
+   |validPlotPatch|
+   |existingContactNo|
+   |existingEmailId|
+   |invalidContactNo|
+   |invalidEmailId|
+   |wrongEndpoint|
+   |invalidUserId|
+   |invalidPlotNumber|
 
 
   @deleteuser
-  Scenario Outline: delete a new user
-    Given the user has valid request header
-    When the user send Delete request from "<scenario>"
+  Scenario Outline: delete a user
+    Given "Delete" request with BaseURL and valid EndPoint from "<scenario>"
+    When the user sends Delete request
     Then The user receives status code and valid response
-        Examples:
+    Examples:
    |scenario|
-   |validUserId|
+   |deleteValidUserId|
+   |deleteValidUserFirstname|
    |invalidUserId|
    |wrongEndpoint|
 
