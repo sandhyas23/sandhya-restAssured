@@ -2,9 +2,9 @@ package requestObjects;
 
 public class Address {
 	  String plotNumber,street, state,country;
-	    int zipCode;
+	    Integer zipCode;
 
-	    public Address(String plotNumber, String street, String state, String country, int zipCode){
+	    public Address(String plotNumber, String street, String state, String country, Integer zipCode){
 	        this.plotNumber = plotNumber;
 	        this.street = street;
 	        this.state = state;
@@ -56,11 +56,11 @@ public class Address {
 	        this.country = country;
 	    }
 
-	    public int getZipCode() {
+	    public Integer getZipCode() {
 	        return zipCode;
 	    }
 
-	    public void setZipCode(int zipCode) {
+	    public void setZipCode(Integer zipCode) {
 	        this.zipCode = zipCode;
 	    }
 
