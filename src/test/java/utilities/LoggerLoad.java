@@ -2,6 +2,7 @@ package utilities;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 
 public class LoggerLoad {
 
@@ -26,5 +27,10 @@ public class LoggerLoad {
 
 	public static void debug(String message) {
 		logger.debug(message);
+	}
+
+	public static void info(JSONObject userObj) {
+		logger.info(userObj);
+		
 	}
 }
