@@ -44,7 +44,7 @@ Feature: User API
     Given "Put" request with BaseURL and valid EndPoint from "<scenario>"
     When the user sends Put request
     Then The user receives status code and valid response
-        Examples:
+    Examples:
    |scenario|
    |validDataAll|
    |existingContactNo|

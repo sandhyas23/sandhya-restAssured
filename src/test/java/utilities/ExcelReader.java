@@ -109,23 +109,6 @@ public class ExcelReader {
     
     
     
-//    
-//    public String getCellValue(String sheetName, int rowNum, int colNum) {
-//        Sheet sheet = workbook.getSheet(sheetName);
-//        if (sheet == null) {
-//            throw new RuntimeException("Sheet " + sheetName + " not found");
-//        }
-//        Row row = sheet.getRow(rowNum);
-//        if (row == null) {
-//            return null;
-//        }
-//        Cell cell = row.getCell(colNum);
-//        if (cell == null) {
-//            return null;
-//        }
-//        return cell.toString();
-//    }
-    
     public void close() throws IOException {
         if (workbook != null) {
             workbook.close();
