@@ -2,13 +2,13 @@
 Feature: User API
   
     Background: Admin login with Basic Auth
-     Given the User is authorized
+     Given Admin is authorized
 
 @createuser
   Scenario Outline: create a new user
   Given "Post" request with BaseURL and valid EndPoint from "<scenario>"
-  When the user sends Post request
-  Then The user receives status code and valid response
+  When Admin sends Post request
+  Then Admin receives status code and valid response
   Examples:
    |scenario|
    |validDataAll|
@@ -26,8 +26,8 @@ Feature: User API
   @getuser
   Scenario Outline: get all users and by user id or firstname
     Given "Get" request with BaseURL and valid EndPoint from "<scenario>"
-    When the user sends Get request
-    Then The user receives status code and valid response
+    When Admin sends Get request
+    Then Admin receives status code and valid response
     Examples:
    |scenario|
    |allUsers|
@@ -42,8 +42,8 @@ Feature: User API
   @updateuser
   Scenario Outline: update a user
     Given "Put" request with BaseURL and valid EndPoint from "<scenario>"
-    When the user sends Put request
-    Then The user receives status code and valid response
+    When Admin sends Put request
+    Then Admin receives status code and valid response
     Examples:
    |scenario|
    |validDataAll|
@@ -58,8 +58,8 @@ Feature: User API
    @patchuser
   Scenario Outline: patch update a user
     Given "Patch" request with BaseURL and valid EndPoint from "<scenario>"
-    When the user sends Patch request
-    Then The user receives status code and valid response
+    When Admin sends Patch request
+    Then Admin receives status code and valid response
     Examples:
    |scenario|
    |validFirstNamePatch|
@@ -77,8 +77,8 @@ Feature: User API
   @deleteuser
   Scenario Outline: delete a user
     Given "Delete" request with BaseURL and valid EndPoint from "<scenario>"
-    When the user sends Delete request
-    Then The user receives status code and valid response
+    When Admin sends Delete request
+    Then Admin receives status code and valid response
     Examples:
    |scenario|
    |deleteValidUserId|

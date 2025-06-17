@@ -39,13 +39,13 @@ public class UserApiStepDef extends Utils {
 	
 	
 	
-	@Given("the User is authorized")
+	@Given("Admin is authorized")
     public void the_user_is_authorized() {
         RestAssured.baseURI = ConfigReader.getProperty("baseUrl");
         request = createAuthorizedRequest();
     }
 	
-	@Given("the User is not authorized")
+	@Given("Admin is not authorized")
 	public void the_user_is_not_authorized() {
 		RestAssured.baseURI = ConfigReader.getProperty("baseUrl");
         request = createUnauthorizedRequest();
@@ -64,7 +64,7 @@ public class UserApiStepDef extends Utils {
 	}
 
 
-	@When("the user sends Post request")
+	@When("Admin sends Post request")
 	public void the_user_sends_post_request() {
 
 		    Address addressObject = buildAddress(scenarioRow, currentScenario.equals("validMandatory"));
@@ -89,7 +89,7 @@ public class UserApiStepDef extends Utils {
 	
 
 
-	@When("the user sends Get request")
+	@When("Admin sends Get request")
 	public void the_user_send_get_request() {
 		   
 		   if (currentScenario.equals("allUsers") || currentScenario.equals("wrongEndpoint") ||
@@ -104,7 +104,7 @@ public class UserApiStepDef extends Utils {
 			}
 	
 	
-	@When("the user sends Put request")
+	@When("Admin sends Put request")
 	public void the_user_send_put_request() {
 		   
 		    Address addressObject = buildAddress(scenarioRow, currentScenario.equals("validMandatory"));
@@ -122,7 +122,7 @@ public class UserApiStepDef extends Utils {
 			}
 	
 	
-	@When("the user sends Patch request")
+	@When("Admin sends Patch request")
 	public void the_user_send_patch_request() {
            
 		JSONObject userObj = buildUserForPatch(scenarioRow,currentScenario);
@@ -140,7 +140,7 @@ public class UserApiStepDef extends Utils {
 	
 	
 	
-	@When("the user sends Delete request")
+	@When("Admin sends Delete request")
 	public void the_user_send_delete_request() {
 		
 		   if (currentScenario.equals("wrongEndpoint") || currentScenario.equals("invalidUserId")) {
@@ -156,7 +156,7 @@ public class UserApiStepDef extends Utils {
 		
 	
 	// Then check for all requests.
-	@Then("The user receives status code and valid response")
+	@Then("Admin receives status code and valid response")
 	public void the_user_receives_status_code_and_valid_response() {
 		
 		validateResponse(response, scenarioRow, sheetName);

@@ -2,13 +2,13 @@
 Feature: User API
   
     Background: Admin login with No Auth
-     Given the User is not authorized
+     Given Admin is not authorized
 
 @noauthcreate
   Scenario Outline: create a new user
   Given "Post" request with BaseURL and valid EndPoint from "<scenario>"
-  When the user sends Post request
-  Then The user receives status code and valid response
+  When Admin sends Post request
+  Then Admin receives status code and valid response
   Examples:
    |scenario|
    |noAuth|
@@ -17,8 +17,8 @@ Feature: User API
   @noauthget
   Scenario Outline: get all users and by user id or firstname
     Given "Get" request with BaseURL and valid EndPoint from "<scenario>"
-    When the user sends Get request
-    Then The user receives status code and valid response
+    When Admin sends Get request
+    Then Admin receives status code and valid response
     Examples:
    |scenario|
    |noAuth|
@@ -27,8 +27,8 @@ Feature: User API
   @noauthput
   Scenario Outline: update a user
     Given "Put" request with BaseURL and valid EndPoint from "<scenario>"
-    When the user sends Put request
-    Then The user receives status code and valid response
+    When Admin sends Put request
+    Then Adminreceives status code and valid response
         Examples:
    |scenario|
    |noAuth|
@@ -37,8 +37,8 @@ Feature: User API
    @noauthpatch
   Scenario Outline: patch update a user
     Given "Patch" request with BaseURL and valid EndPoint from "<scenario>"
-    When the user sends Patch request
-    Then The user receives status code and valid response
+    When Admin sends Patch request
+    Then Admin receives status code and valid response
     Examples:
    |scenario|
    |noAuth|
@@ -48,8 +48,8 @@ Feature: User API
   @noauthcdelete
   Scenario Outline: delete a user
     Given "Delete" request with BaseURL and valid EndPoint from "<scenario>"
-    When the user sends Delete request
-    Then The user receives status code and valid response
+    When Admin sends Delete request
+    Then Admin receives status code and valid response
     Examples:
    |scenario|
    |noAuth|
