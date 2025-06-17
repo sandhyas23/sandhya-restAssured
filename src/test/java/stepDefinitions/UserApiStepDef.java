@@ -45,15 +45,19 @@ public class UserApiStepDef extends Utils {
         request = createAuthorizedRequest();
     }
 	
-	@Given("Admin is not authorized")
-	public void the_user_is_not_authorized() {
-		RestAssured.baseURI = ConfigReader.getProperty("baseUrl");
-        request = createUnauthorizedRequest();
-	}
+//	@Given("Admin is not authorized")
+//	public void the_user_is_not_authorized() {
+//		RestAssured.baseURI = ConfigReader.getProperty("baseUrl");
+//        request = createUnauthorizedRequest();
+//	}
 	
 	
 	@Given("{string} request with BaseURL and valid EndPoint from {string}")
 	public void request_with_base_url_and_valid_end_point_from(String requestName, String scenario) {
+		if(scenario.equals("noAuth")) {
+			RestAssured.baseURI = ConfigReader.getProperty("baseUrl");
+	        request = createUnauthorizedRequest();
+		}
 		    currentScenario = scenario;
 		    sheetName = requestName;
 		    requestData = excel.get(sheetName);
@@ -65,7 +69,7 @@ public class UserApiStepDef extends Utils {
 
 
 	@When("Admin sends Post request")
-	public void the_user_sends_post_request() {
+	public void admin_sends_post_request() {
 
 		    Address addressObject = buildAddress(scenarioRow, currentScenario.equals("validMandatory"));
 		    User userObject = buildUser(scenarioRow, addressObject);
@@ -90,22 +94,37 @@ public class UserApiStepDef extends Utils {
 
 
 	@When("Admin sends Get request")
-	public void the_user_send_get_request() {
+	public void admin_sends_get_request() {
+		
+	    if (newUserId <= 1) {
+	        request_with_base_url_and_valid_end_point_from("POST", "validDataAll");
+	        admin_sends_post_request();
+	    }
+	    
+	
+			   if (currentScenario.equals("allUsers") || currentScenario.equals("wrongEndpoint") ||
+					   currentScenario.equals("invalidUserId") || currentScenario.equals("invalidUserFirstname")
+					   || currentScenario.equals("noAuth")) {
+				        response = request.get(endPoint);
+				    } else if (currentScenario.equals("validUserFirstname")) {
+				        response = request.get(endPoint, newUserFirstName);
+				    } else {
+				        response = request.get(endPoint, newUserId);
+				    }
+
 		   
-		   if (currentScenario.equals("allUsers") || currentScenario.equals("wrongEndpoint") ||
-				   currentScenario.equals("invalidUserId") || currentScenario.equals("invalidUserFirstname")
-				   || currentScenario.equals("noAuth")) {
-			        response = request.get(endPoint);
-			    } else if (currentScenario.equals("validUserFirstname")) {
-			        response = request.get(endPoint, newUserFirstName);
-			    } else {
-			        response = request.get(endPoint, newUserId);
-			    }
+		   
 			}
 	
 	
 	@When("Admin sends Put request")
-	public void the_user_send_put_request() {
+	public void admin_sends_put_request() {
+		
+		 if (newUserId <= 1) {
+		        request_with_base_url_and_valid_end_point_from("POST", "validDataAll");
+		        admin_sends_post_request();
+		    }
+		    
 		   
 		    Address addressObject = buildAddress(scenarioRow, currentScenario.equals("validMandatory"));
 		    User userObject = buildUser(scenarioRow, addressObject);
@@ -123,7 +142,13 @@ public class UserApiStepDef extends Utils {
 	
 	
 	@When("Admin sends Patch request")
-	public void the_user_send_patch_request() {
+	public void admin_sends_patch_request() {
+		
+		 if (newUserId <= 1) {
+		        request_with_base_url_and_valid_end_point_from("POST", "validDataAll");
+		        admin_sends_post_request();
+		    }
+		    
            
 		JSONObject userObj = buildUserForPatch(scenarioRow,currentScenario);
 		LoggerLoad.info(userObj);
@@ -141,7 +166,13 @@ public class UserApiStepDef extends Utils {
 	
 	
 	@When("Admin sends Delete request")
-	public void the_user_send_delete_request() {
+	public void admin_sends_delete_request() {
+		
+		 if (newUserId <= 1) {
+		        request_with_base_url_and_valid_end_point_from("POST", "validDataAll");
+		        admin_sends_post_request();
+		    }
+		    
 		
 		   if (currentScenario.equals("wrongEndpoint") || currentScenario.equals("invalidUserId")) {
 			        response = request.delete(endPoint);
@@ -157,7 +188,7 @@ public class UserApiStepDef extends Utils {
 	
 	// Then check for all requests.
 	@Then("Admin receives status code and valid response")
-	public void the_user_receives_status_code_and_valid_response() {
+	public void admin_receives_status_code_and_valid_response() {
 		
 		validateResponse(response, scenarioRow, sheetName);
 		
