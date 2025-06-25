@@ -8,6 +8,7 @@ import io.cucumber.testng.CucumberOptions;
 	@CucumberOptions(plugin = { "pretty",
 			"html:target/Report.html","html:target/cucumber-reports/cucumber.html",
     		"io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm" }, 
+			tags = "@patch or @put",
 			monochrome = false, features = {
 					"src/test/resources/features" }, glue = { "stepDefinitions", "hooks" })
 

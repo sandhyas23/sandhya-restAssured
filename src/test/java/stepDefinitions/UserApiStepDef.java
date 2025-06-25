@@ -24,11 +24,12 @@ public class UserApiStepDef extends Utils {
 	
 	private RequestSpecification request;	
 	private Response response;
-	private static int newUserId;
+	public static int newUserId;
 	private static int mandatoryUserId;
 	private static String newUserFirstName;
 	private static String mandatoryUserFirstName;
 	String currentScenario;
+	String postScenario;
 	String endPoint;
 	private Map<String,List<Map<String,String>>> excel = Hooks.excelData;
 	List<Map<String,String>> requestData;
@@ -45,12 +46,6 @@ public class UserApiStepDef extends Utils {
         request = createAuthorizedRequest();
     }
 	
-//	@Given("Admin is not authorized")
-//	public void the_user_is_not_authorized() {
-//		RestAssured.baseURI = ConfigReader.getProperty("baseUrl");
-//        request = createUnauthorizedRequest();
-//	}
-	
 	
 	@Given("{string} request with BaseURL and valid EndPoint from {string}")
 	public void request_with_base_url_and_valid_end_point_from(String requestName, String scenario) {
@@ -58,7 +53,15 @@ public class UserApiStepDef extends Utils {
 			RestAssured.baseURI = ConfigReader.getProperty("baseUrl");
 	        request = createUnauthorizedRequest();
 		}
-		    currentScenario = scenario;
+		
+		if(requestName.equals("Post")) {
+			postScenario = scenario;
+		}
+		else {
+			currentScenario = scenario;
+		}
+	    
+		    
 		    sheetName = requestName;
 		    requestData = excel.get(sheetName);
 		    //LoggerLoad.info("requestData: " + requestData);
@@ -71,19 +74,19 @@ public class UserApiStepDef extends Utils {
 	@When("Admin sends Post request")
 	public void admin_sends_post_request() {
 
-		    Address addressObject = buildAddress(scenarioRow, currentScenario.equals("validMandatory"));
+		    Address addressObject = buildAddress(scenarioRow, postScenario.equals("validMandatory"));
 		    User userObject = buildUser(scenarioRow, addressObject);
 
 		   System.out.println(userObject);
 
 		    response = request.body(userObject).post(endPoint);
 
-		    if (response.statusCode()== 201 && currentScenario.equals("validDataAll")) {
+		    if (response.statusCode()== 201 && postScenario.equals("validDataAll")) {
 		    	LoggerLoad.info("User created successfully with ID: " + response.then().extract().path("userId"));
 		        newUserId = response.then().extract().path("userId");
 		        newUserFirstName = response.then().extract().path("userFirstName");
 			}
-		    else if (response.statusCode()== 201 && currentScenario.equals("validMandatory")) {
+		    else if (response.statusCode()== 201 && postScenario.equals("validMandatory")) {
 		    	LoggerLoad.info("User created successfully with mandatory fields only with ID: " + response.then().extract().path("userId")+" -- "+response.then().extract().path("userAddress.zipCode"));
 		        mandatoryUserId = response.then().extract().path("userId");
 		        mandatoryUserFirstName = response.then().extract().path("userFirstName");
@@ -97,8 +100,9 @@ public class UserApiStepDef extends Utils {
 	public void admin_sends_get_request() {
 		
 	    if (newUserId <= 1) {
-	        request_with_base_url_and_valid_end_point_from("POST", "validDataAll");
+	        request_with_base_url_and_valid_end_point_from("Post", "validDataAll");
 	        admin_sends_post_request();
+	        request_with_base_url_and_valid_end_point_from("Get", currentScenario);
 	    }
 	    
 	
@@ -120,10 +124,7 @@ public class UserApiStepDef extends Utils {
 	@When("Admin sends Put request")
 	public void admin_sends_put_request() {
 		
-		 if (newUserId <= 1) {
-		        request_with_base_url_and_valid_end_point_from("POST", "validDataAll");
-		        admin_sends_post_request();
-		    }
+		
 		    
 		   
 		    Address addressObject = buildAddress(scenarioRow, currentScenario.equals("validMandatory"));
@@ -135,6 +136,11 @@ public class UserApiStepDef extends Utils {
 			        response = request.body(userObject).put(endPoint);
 			    } 
 			 else {
+				 if (newUserId <= 1) {
+				        request_with_base_url_and_valid_end_point_from("Post", "validDataAll");
+				        admin_sends_post_request();
+				        request_with_base_url_and_valid_end_point_from("Put", currentScenario);
+				    }
 				 LoggerLoad.info("UserID in put: " + newUserId+" ,  "+newUserFirstName);
 			        response = request.body(userObject).put(endPoint, newUserId);
 			    }
@@ -142,13 +148,12 @@ public class UserApiStepDef extends Utils {
 	
 	
 	@When("Admin sends Patch request")
-	public void admin_sends_patch_request() {
-		
-		 if (newUserId <= 1) {
-		        request_with_base_url_and_valid_end_point_from("POST", "validDataAll");
-		        admin_sends_post_request();
-		    }
-		    
+	public void admin_sends_patch_request() {    
+		if (newUserId <= 1) {
+	        request_with_base_url_and_valid_end_point_from("Post", "validDataAll");
+	        admin_sends_post_request();
+	        request_with_base_url_and_valid_end_point_from("Patch", currentScenario);
+	    }
            
 		JSONObject userObj = buildUserForPatch(scenarioRow,currentScenario);
 		LoggerLoad.info(userObj);
@@ -157,7 +162,6 @@ public class UserApiStepDef extends Utils {
 			        response = request.body(userObj).patch(endPoint);
 			    } 
 			 else {
-				 //LoggerLoad.info("UserID in patch: " + newUserId+" ,  "+newUserFirstName);
 			        response = request.body(userObj.toString()).patch(endPoint, newUserId);
 			      LoggerLoad.info(response.asString());
 			    }
@@ -168,25 +172,37 @@ public class UserApiStepDef extends Utils {
 	@When("Admin sends Delete request")
 	public void admin_sends_delete_request() {
 		
-		 if (newUserId <= 1) {
-		        request_with_base_url_and_valid_end_point_from("POST", "validDataAll");
-		        admin_sends_post_request();
-		    }
+		 
+		 
 		    
 		
 		   if (currentScenario.equals("wrongEndpoint") || currentScenario.equals("invalidUserId")) {
 			        response = request.delete(endPoint);
 			    } else if (currentScenario.equals("deleteValidUserFirstname")) {
+			    	if (mandatoryUserId <= 1) {
+				        request_with_base_url_and_valid_end_point_from("Post", "validMandatory");
+				        admin_sends_post_request();
+				        request_with_base_url_and_valid_end_point_from("Delete", currentScenario);
+				    }
+			    	
 			        response = request.delete(endPoint, mandatoryUserFirstName);
+			        mandatoryUserId = response.statusCode() == 200 ? 0 : mandatoryUserId;
 			    } else {
 			    	//LoggerLoad.info("UserID in delete: " + newUserId+" ,  "+newUserFirstName);
+			    	if (newUserId <= 1) {
+				        request_with_base_url_and_valid_end_point_from("Post", "validDataAll");
+				        admin_sends_post_request();
+				        request_with_base_url_and_valid_end_point_from("Delete", currentScenario);
+				    }
+				 
 			        response = request.delete(endPoint, newUserId);
+			        newUserId = response.statusCode() == 200 ? 0 : newUserId;
 			    }
 			}
 
 		
 	
-	// Then check for all requests.
+
 	@Then("Admin receives status code and valid response")
 	public void admin_receives_status_code_and_valid_response() {
 		
